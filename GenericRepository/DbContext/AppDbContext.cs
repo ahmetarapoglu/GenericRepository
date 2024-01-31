@@ -8,6 +8,8 @@ namespace GenericRepository.DbContext
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
+
 
         public AppDbContext(DbContextOptions options) : base(options)
         {
@@ -30,6 +32,25 @@ namespace GenericRepository.DbContext
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.UseCollation("Turkish_CI_AS");
+
+            modelBuilder.Entity<Category>()
+                .HasKey(c =>c.Id );
+
+            modelBuilder.Entity<Product>()
+               .HasKey(p => p.Id);
+
+            modelBuilder.Entity<ProductCategory>()
+                .HasKey(pc => new { pc.ProductId, pc.CategoryId });
+
+            modelBuilder.Entity<ProductCategory>()
+                .HasOne(pc => pc.Product)
+                .WithMany(p => p.ProductCategories)
+                .HasForeignKey(pc => pc.ProductId);
+
+            modelBuilder.Entity<ProductCategory>()
+                .HasOne(pc => pc.Category)
+                .WithMany(c => c.ProductCategories)
+                .HasForeignKey(pc => pc.CategoryId);
         }
 
     }
