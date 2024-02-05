@@ -154,9 +154,6 @@ namespace GenericRepository.Controllers
                 if (model.Id == 0 || model?.Id == null)
                     throw new Exception("Reauested Product Not Found!.");
 
-                //Where
-                Expression<Func<Product, bool>> filter = i => i.Id == model.Id;
-
                 Expression<Func<ProductCategory, bool>> Predicte = i => i.ProductId == model.Id;
 
                 await _productCategoryRepository.DeleteRangeAsync(Predicte);
@@ -176,7 +173,7 @@ namespace GenericRepository.Controllers
                     }).ToList();
                 }
 
-                await _productRepository.UpdateAsync(action, filter , include);
+                await _productRepository.UpdateAsync(action, i => i.Id == model.Id, include);
 
                 return Ok();
             }
